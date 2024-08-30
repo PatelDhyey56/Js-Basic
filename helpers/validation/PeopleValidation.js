@@ -22,15 +22,15 @@ const postPeopleValid = {
 
 const putPeopleValid = {
   name: {
-    required: true,
+    required: false,
     pattern: patterns.textOnly,
   },
   age: {
-    required: true,
+    required: false,
     pattern: patterns.numberOnly,
   },
   gender: {
-    required: true,
+    required: false,
     pattern: patterns.textOnly,
   },
 };
@@ -54,6 +54,7 @@ const postPeopleValidate = (req, res, next) => {
     });
   next();
 };
+
 const putPeopleValidate = (req, res, next) => {
   let bodyData = req.body;
   let bodyKeys = Object.keys(req.body);

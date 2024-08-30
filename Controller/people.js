@@ -38,7 +38,16 @@ const postPeople = (req, res) => {
 
 const putPeople = (req, res) => {
   const { id } = req.params;
-  PeopleList = PeopleList.map((e, i) => (i + 1 == id ? req.body : e));
+  const Body = Object.keys(req.body);
+  let UpdatePeople = PeopleList.filter((e, i) => i + 1 == id)[0];
+  if (!UpdatePeople)
+    return genralResponse(res, 400, {
+      message: "Please Enter Valid User",
+    });
+  for (let title of Body) {
+    UpdatePeople[title] = req.body[title];
+  }
+  PeopleList = PeopleList.map((e, i) => (i + 1 == id ? UpdatePeople : e));
   genralResponse(res, 200, {
     message: "success",
     data: PeopleList,
