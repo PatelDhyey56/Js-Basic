@@ -1,17 +1,17 @@
-const express = require("express");
-const {
+import { Router } from "express";
+import {
   getPeople,
   postPeople,
   getPeopleById,
   putPeople,
   deletePeople,
-} = require("../Controller/people");
-const {
+} from "../Controller/people.js";
+import {
   postPeopleValidate,
   putPeopleValidate,
-} = require("../helpers/validation/PeopleValidation");
+} from "../helpers/validation/PeopleValidation.js";
 
-const router = express.Router();
+const router = Router();
 
 router.get("/", getPeople);
 router.get("/:id", getPeopleById);
@@ -19,4 +19,4 @@ router.post("/", postPeopleValidate, postPeople);
 router.put("/:id", putPeopleValidate, putPeople);
 router.delete("/:id", deletePeople);
 
-module.exports = router;
+export default router;

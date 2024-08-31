@@ -1,4 +1,4 @@
-const { queryRun } = require("../config/db");
+import { queryRun } from "../config/db.js";
 
 const selectTable = async (tableName) => {
   return await queryRun(`SELECT * FROM "${tableName}"`);
@@ -10,12 +10,12 @@ const selectById = async (tableName, id) => {
   return checkID;
 };
 
-const createData = async (tableName, body, bodyValues) => {
+const addData = async (tableName, body, bodyValues) => {
   let query = `INSERT INTO "${tableName}"`;
   let col = "(";
   let val = "(";
   let no = 1;
-  for (e of body) {
+  for (let e of body) {
     col += `${e[0]}`;
     val += `$${no}`;
     no++;
@@ -34,7 +34,7 @@ const createData = async (tableName, body, bodyValues) => {
 const updateData = async (tableName, id, body, bodyValues) => {
   let query = `Update "${tableName}" SET `;
   let no = 1;
-  for (e of body) {
+  for (let e of body) {
     query += `${e[0]}= $${no}`;
     no++;
     if (body.length >= no) query += ", ";
@@ -47,10 +47,4 @@ const deleteData = async (tableName, id) => {
   return await queryRun(`DELETE FROM "${tableName}" WHERE id = ${id};`);
 };
 
-module.exports = {
-  selectTable,
-  selectById,
-  createData,
-  updateData,
-  deleteData,
-};
+export { selectTable, selectById, updateData, deleteData, addData };

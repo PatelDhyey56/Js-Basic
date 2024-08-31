@@ -1,5 +1,4 @@
-require("dotenv").config();
-module.exports = {
-  PORT: process.env.PORT,
-  PASSKEY: process.env.PASSKEY,
-};
+import * as dotenv from "dotenv";
+dotenv.config();
+const { PORT, PASSKEY } = process.env;
+export default { PORT, PASSKEY };

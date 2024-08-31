@@ -1,6 +1,7 @@
-const { Client } = require("pg");
+import postgresql from "pg";
+const { Pool } = postgresql;
 
-const db = new Client({
+const db = new Pool({
   user: "root",
   host: "localhost",
   database: "cittagames",
@@ -22,4 +23,4 @@ const queryRun = (sql, values = []) => {
   });
 };
 
-module.exports = { db, queryRun };
+export { db, queryRun };

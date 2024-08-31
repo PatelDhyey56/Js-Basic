@@ -1,19 +1,18 @@
-const express = require("express");
-const { PORT } = require("./config/index");
-const router = require("./routers/route");
+import express from "express";
+import env from "./config/index.js";
+const { PORT } = env;
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import router from "./routers/route.js";
+import { errorHandler } from "./helpers/errorHandler.js";
 const app = express();
-const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(router);
-
-app.use((err, req, res, next) => {
-  if (!err) return next();
-  res.status(500).send({ message: err.message || "Internal server error!!!" });
-});
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`server Listen at ${PORT}`));

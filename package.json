@@ -2,6 +2,7 @@
   "name": "task",
   "version": "1.0.0",
   "main": "array.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"
@@ -16,6 +17,7 @@
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
+    "esm": "^3.2.25",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "nodemon": "^3.1.4",

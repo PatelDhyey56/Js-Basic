@@ -1,5 +1,3 @@
-const { genralResponse } = require("../generalFunction");
-
 const patterns = {
   textOnly: "^[a-zA-Z\\s]+$",
   numberOnly: "^\\d+$",
@@ -44,14 +42,9 @@ const postPeopleValidate = (req, res, next) => {
       postPeopleValid[e]?.required &&
       !bodyData[e]?.toString().match(postPeopleValid[e]?.pattern)
     )
-      genralResponse(res, 400, {
-        message: "Validation Error",
-      });
+      throw new Error(`Please Enter Valid ${e}`);
   }
-  if (bodyKeys.length > 0)
-    return genralResponse(res, 400, {
-      message: "Enter Valid Data",
-    });
+  if (bodyKeys.length > 0) throw new Error("Enter Valid Data");
   next();
 };
 
@@ -65,17 +58,10 @@ const putPeopleValidate = (req, res, next) => {
       putPeopleValid[e]?.required &&
       !bodyData[e]?.toString().match(putPeopleValid[e]?.pattern)
     )
-      genralResponse(res, 400, {
-        message: "Validation Error",
-      });
+      throw new Error(`Please Enter Valid ${e}`);
   }
-  if (bodyKeys.length > 0)
-    return genralResponse(res, 400, {
-      message: "Enter Valid Data",
-    });
+  if (bodyKeys.length > 0) throw new Error("Enter Valid Data");
   next();
 };
-module.exports = {
-  postPeopleValidate,
-  putPeopleValidate,
-};
+
+export { postPeopleValidate, putPeopleValidate };
