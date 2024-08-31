@@ -9,17 +9,16 @@ const {
 const { genralResponse } = require("../helpers/generalFunction");
 var jwt = require("jsonwebtoken");
 
-const getPeople = async (req, res) => {
+const getPeople = async (req, res, next) => {
   try {
     let data = await selectTable("People");
     genralResponse(res, 200, { message: "success", data });
   } catch (e) {
-    console.log(e);
-    genralResponse(res, 400, { message: "Error from Server side!!!" });
+    next(e);
   }
 };
 
-const getPeopleById = async (req, res) => {
+const getPeopleById = async (req, res, next) => {
   const { id } = req.params;
   const { token } = req.cookies;
   try {
@@ -31,13 +30,11 @@ const getPeopleById = async (req, res) => {
         data,
       });
   } catch (e) {
-    genralResponse(res, 400, {
-      message: "Please Enter valid Pass Key",
-    });
+    next(e);
   }
 };
 
-const postPeople = async (req, res) => {
+const postPeople = async (req, res, next) => {
   const Body = Object.entries(req.body);
   const bodyValues = Object.values(req.body);
   try {
@@ -49,38 +46,36 @@ const postPeople = async (req, res) => {
       YourToken: token,
     });
   } catch (e) {
-    console.log(e);
-    genralResponse(res, 400, { message: "Error from Server side!!!" });
+    next(e);
   }
 };
 
-const putPeople = async (req, res) => {
+const putPeople = async (req, res, next) => {
   const { id } = req.params;
   const Body = Object.entries(req.body);
   const bodyValues = Object.values(req.body);
   try {
-    if ((await selectById("People", id).length) === 0) throw error;
+    await selectById("People", id);
     let data = await updateData("People", id, Body, bodyValues);
     genralResponse(res, 200, {
       message: "Data Updated!!!",
       data,
     });
   } catch (e) {
-    console.log(e);
-    genralResponse(res, 400, { message: "Error from Server side!!!" });
+    next(e);
   }
 };
 
 const deletePeople = async (req, res) => {
   const { id } = req.params;
   try {
+    await selectById("People", id);
     deleteData("People", id);
     genralResponse(res, 200, {
       message: "Data Deleted!!!",
     });
   } catch (e) {
-    console.log(e);
-    genralResponse(res, 400, { message: "Error from Server side!!!" });
+    next(e);
   }
 };
 

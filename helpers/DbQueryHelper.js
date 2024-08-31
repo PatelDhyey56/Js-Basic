@@ -1,15 +1,17 @@
 const { queryRun } = require("../config/db");
 
 const selectTable = async (tableName) => {
-  return await queryRun(`SELECT * FROM public."${tableName}"`);
+  return await queryRun(`SELECT * FROM "${tableName}"`);
 };
 
 const selectById = async (tableName, id) => {
-  return await queryRun(`SELECT * FROM public."${tableName}" where id=${id}`);
+  let checkID = await queryRun(`SELECT * FROM "${tableName}" where id=${id}`);
+  if (checkID.length === 0) throw new Error("User not found!!!");
+  return checkID;
 };
 
 const createData = async (tableName, body, bodyValues) => {
-  let query = `INSERT INTO public."${tableName}"`;
+  let query = `INSERT INTO "${tableName}"`;
   let col = "(";
   let val = "(";
   let no = 1;
@@ -30,7 +32,7 @@ const createData = async (tableName, body, bodyValues) => {
 };
 
 const updateData = async (tableName, id, body, bodyValues) => {
-  let query = `Update public."${tableName}" SET `;
+  let query = `Update "${tableName}" SET `;
   let no = 1;
   for (e of body) {
     query += `${e[0]}= $${no}`;
@@ -42,7 +44,7 @@ const updateData = async (tableName, id, body, bodyValues) => {
 };
 
 const deleteData = async (tableName, id) => {
-  return await queryRun(`DELETE FROM public."${tableName}" WHERE id = ${id};`);
+  return await queryRun(`DELETE FROM "${tableName}" WHERE id = ${id};`);
 };
 
 module.exports = {

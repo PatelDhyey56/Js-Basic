@@ -1,4 +1,5 @@
 const { Client } = require("pg");
+
 const db = new Client({
   user: "root",
   host: "localhost",

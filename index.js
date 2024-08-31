@@ -11,4 +11,9 @@ app.use(cookieParser());
 
 app.use(router);
 
+app.use((err, req, res, next) => {
+  if (!err) return next();
+  res.status(500).send({ message: err.message || "Internal server error!!!" });
+});
+
 app.listen(PORT, () => console.log(`server Listen at ${PORT}`));
