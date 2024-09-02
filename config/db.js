@@ -1,17 +1,24 @@
 import postgresql from "pg";
+import {
+  DB_DATABASE,
+  DB_HOST,
+  DB_PASSWORD,
+  DB_PORT,
+  DB_USER,
+} from "./index.js";
 const { Pool } = postgresql;
 
 const db = new Pool({
-  user: "root",
-  host: "localhost",
-  database: "cittagames",
-  password: "root@123",
-  port: 5432,
+  user: DB_USER,
+  host: DB_HOST,
+  port: DB_PORT,
+  database: DB_DATABASE,
+  password: DB_PASSWORD,
 });
 
 db.connect(function (err) {
   if (err) throw err;
-  console.log("Db Connected!!!");
+  console.log("Db Connected :)");
 });
 
 const queryRun = (sql, values = []) => {

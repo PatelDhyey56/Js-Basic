@@ -1,6 +1,5 @@
 import express from "express";
-import env from "./config/index.js";
-const { PORT } = env;
+import { PORT } from "./config/index.js";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import router from "./routers/route.js";
