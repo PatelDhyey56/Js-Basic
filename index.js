@@ -3,7 +3,7 @@ import { PORT } from "./config/index.js";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import router from "./routers/route.js";
-import { errorHandler } from "./helpers/errorHandler.js";
+import { errorHandler } from "./helpers/generalFunctions.js";
 const app = express();
 
 app.use(express.json());

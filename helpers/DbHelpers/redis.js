@@ -1,6 +1,5 @@
 import { createClient } from "redis";
-import { REDIS_TTL } from "../config/index.js";
-import redisHelper from "./redisHelper.js";
+import { REDIS_TTL } from "../../config/index.js";
 
 const redis = createClient();
 
@@ -26,7 +25,6 @@ async function setObjectArrayCache(
       });
     }
   } catch (err) {
-    console.log(err);
     return null;
   }
 }
@@ -62,14 +60,14 @@ async function setObjectCache(key, data, ttl = REDIS_TTL) {
     });
     return resData;
   } catch (err) {
-    console.log(err);
     return null;
   }
 }
 
-async function removeCache(key) {
+async function removeCache(key, object = false, listName) {
   try {
     await redis.del(key);
+    object && (await redis.lRem(listName, -1, key));
   } catch (err) {
     return null;
   }

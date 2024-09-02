@@ -1,4 +1,4 @@
-import { queryRun } from "../config/db.js";
+import { queryRun } from "../../config/db.js";
 
 const selectTable = async (tableName) => {
   return await queryRun(`SELECT * FROM "${tableName}"`);

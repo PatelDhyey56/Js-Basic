@@ -5,8 +5,8 @@ import {
   addData,
   updateData,
   deleteData,
-} from "../helpers/DbQueryHelper.js";
-import { genralResponse } from "../helpers/generalFunction.js";
+} from "../helpers/DbHelpers/DbQueryHelper.js";
+import { genralResponse } from "../helpers/generalFunctions.js";
 import jwt from "jsonwebtoken";
 import {
   setObjectArrayCache,
@@ -14,9 +14,9 @@ import {
   getObjectCache,
   setObjectCache,
   removeCache,
-} from "../helpers/redis.js";
-import Messages from "../helpers/messages.js";
-import redisHelper from "../helpers/redisHelper.js";
+} from "../helpers/DbHelpers/redis.js";
+import Messages from "../helpers/textHelpers/messages.js";
+import redisHelper from "../helpers/textHelpers/redisHelper.js";
 
 let result;
 async function getPeople(req, res, next) {
@@ -90,7 +90,11 @@ const deletePeople = async (req, res, next) => {
   try {
     await selectById("People", id);
     deleteData("People", id);
-    await removeCache(`${redisHelper.PeopleHash}${id}`);
+    await removeCache(
+      `${redisHelper.PeopleHash}${id}`,
+      true,
+      redisHelper.PeopleList
+    );
     genralResponse(res, 200, {
       message: Messages.PEOPLE_DELETE,
     });
