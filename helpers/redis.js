@@ -1,5 +1,6 @@
 import { createClient } from "redis";
 import { REDIS_TTL } from "../config/index.js";
+import redisHelper from "./redisHelper.js";
 
 const redis = createClient();
 
@@ -7,31 +8,77 @@ redis.on("error", (err) => console.log("Redis Client Error", err));
 
 await redis.connect().then(() => console.log("Redis Connnected :)"));
 
-async function getCache(key) {
+async function setObjectArrayCache(
+  listName,
+  objectName,
+  data,
+  ttl = REDIS_TTL
+) {
   try {
-    const data = await redis.get(key);
+    for (let e of data) {
+      await redis.hSet(`${objectName}${e.id}`, e, {
+        EX: ttl,
+        NX: true,
+      });
+      await redis.lPush(listName, `${objectName}${e.id}`, {
+        EX: ttl,
+        NX: true,
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+async function getObjectArrayCache(ListName) {
+  try {
+    const keys = await redis.lRange(ListName, 0, -1);
+    let data = [];
+    for (let k of keys) {
+      const ans = await redis.hGetAll(k);
+      data.push(ans);
+    }
     return data;
   } catch (err) {
     return null;
   }
 }
-function setStringCache(key, data, ttl = REDIS_TTL) {
+
+async function getObjectCache(key) {
   try {
-    redis.set(key, JSON.stringify(data), {
+    let data = await redis.hGetAll(key);
+    return Object.keys(data).length ? data : null;
+  } catch (err) {
+    return null;
+  }
+}
+
+async function setObjectCache(key, data, ttl = REDIS_TTL) {
+  try {
+    let resData = await redis.hSet(key, data, {
       EX: ttl,
       NX: true,
     });
+    return resData;
   } catch (err) {
+    console.log(err);
     return null;
   }
 }
 
-function removeCache(key) {
+async function removeCache(key) {
   try {
-    redis.del(key);
+    await redis.del(key);
   } catch (err) {
     return null;
   }
 }
 
-export { getCache, setStringCache, removeCache };
+export {
+  setObjectArrayCache,
+  getObjectArrayCache,
+  getObjectCache,
+  setObjectCache,
+  removeCache,
+};
