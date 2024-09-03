@@ -7,7 +7,6 @@ import {
   deleteData,
 } from "../helpers/DbHelpers/DbQueryHelper.js";
 import { genralResponse } from "../helpers/generalFunctions.js";
-import jwt from "jsonwebtoken";
 import {
   setObjectArrayCache,
   getObjectArrayCache,
@@ -17,13 +16,14 @@ import {
 } from "../helpers/DbHelpers/redis.js";
 import Messages from "../helpers/textHelpers/messages.js";
 import redisHelper from "../helpers/textHelpers/redisHelper.js";
+import jwt from "jsonwebtoken";
 
 let result;
 async function getPeople(req, res, next) {
   try {
     const cacheData = await getObjectArrayCache(redisHelper.PeopleList);
-    result = cacheData.length === 0 ? await selectTable("People") : cacheData;
-    cacheData.length === 0 &&
+    result = !!cacheData.length ? cacheData : await selectTable("People");
+    !cacheData.length &&
       (await setObjectArrayCache(
         redisHelper.PeopleList,
         redisHelper.PeopleHash,
