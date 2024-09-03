@@ -1,4 +1,5 @@
 import { queryRun } from "../../config/db.js";
+import Messages from "../textHelpers/messages.js";
 
 const selectTable = async (tableName) => {
   return await queryRun(`SELECT * FROM "${tableName}"`);
@@ -6,7 +7,7 @@ const selectTable = async (tableName) => {
 
 const selectById = async (tableName, id) => {
   let checkID = await queryRun(`SELECT * FROM "${tableName}" where id=${id}`);
-  if (checkID.length === 0) throw new Error("User not found!!!");
+  if (checkID.length === 0) throw new Error(Messages.PEOPLE_VALIDATE);
   return checkID;
 };
 

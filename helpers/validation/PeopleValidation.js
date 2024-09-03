@@ -1,37 +1,5 @@
-const patterns = {
-  textOnly: "^[a-zA-Z\\s]+$",
-  numberOnly: "^\\d+$",
-};
-
-const postPeopleValid = {
-  name: {
-    required: true,
-    pattern: patterns.textOnly,
-  },
-  age: {
-    required: true,
-    pattern: patterns.numberOnly,
-  },
-  gender: {
-    required: true,
-    pattern: patterns.textOnly,
-  },
-};
-
-const putPeopleValid = {
-  name: {
-    required: false,
-    pattern: patterns.textOnly,
-  },
-  age: {
-    required: false,
-    pattern: patterns.numberOnly,
-  },
-  gender: {
-    required: false,
-    pattern: patterns.textOnly,
-  },
-};
+import { postPeopleValid, putPeopleValid } from "./validators.js";
+import Messages from "../textHelpers/messages.js";
 
 const postPeopleValidate = (req, res, next) => {
   let bodyData = req.body;
@@ -44,7 +12,7 @@ const postPeopleValidate = (req, res, next) => {
     )
       throw new Error(`Please Enter Valid ${e}`);
   }
-  if (bodyKeys.length > 0) throw new Error("Enter Valid Data");
+  if (!!bodyKeys.length) throw new Error(Messages.VALIDATION_ERROR);
   next();
 };
 
@@ -52,7 +20,7 @@ const putPeopleValidate = (req, res, next) => {
   let bodyData = req.body;
   let bodyKeys = Object.keys(req.body);
   for (let e in putPeopleValid) {
-    if (bodyKeys.length == 0) return next();
+    if (!bodyKeys.length) return next();
     bodyKeys.pop(e);
     if (
       putPeopleValid[e]?.required &&
@@ -60,7 +28,7 @@ const putPeopleValidate = (req, res, next) => {
     )
       throw new Error(`Please Enter Valid ${e}`);
   }
-  if (bodyKeys.length > 0) throw new Error("Enter Valid Data");
+  if (!!bodyKeys.length) throw new Error(Messages.VALIDATION_ERROR);
   next();
 };
 

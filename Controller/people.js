@@ -40,7 +40,7 @@ const getPeopleById = async (req, res, next) => {
   const { token } = req.cookies;
   try {
     let verify = jwt.verify(token, PASSKEY);
-    if (!verify) throw new Error("Pelease Validate Your Profile!!!");
+    if (!verify) throw new Error(Messages.PEOPLE_VALIDATE);
     const cacheData = await getObjectCache(`${redisHelper.PeopleHash}${id}`);
     result = cacheData ? cacheData : await selectById("People", id);
     genralResponse(res, 200, {
