@@ -7,15 +7,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-let Myage = 10;
-let promises = new Promise((resolve, reject) => Myage > 18 ? resolve("Drive") : reject("Dont Drive"));
-promises.then((a) => console.log(a)).catch((e) => console.log(e));
+let Myage = 21;
+let promises = new Promise((resolve, reject) => Myage >= 18 ? resolve("Drive :)") : reject("Drive But Safely"));
+let promises2 = new Promise((resolve, reject) => Myage > 15 && Myage < 18 ? reject("Drive Safely") : resolve(promises));
+let promises3 = new Promise((resolve, reject) => Myage > 10 ? resolve(promises2) : reject("Drive :)"));
+promises3
+    .then((p3) => {
+    console.log(p3);
+})
+    .catch((e) => console.log(`\nError : ${e}`));
 console.log("Try Catch -->\n");
-function Try_Catch() {
+(function Try_Catch() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let data = yield promises;
-            console.log(data);
+            let data1 = yield promises3;
+            console.log(data1);
         }
         catch (e) {
             console.log(e);
@@ -24,5 +30,4 @@ function Try_Catch() {
             console.log("finnally");
         }
     });
-}
-Try_Catch();
+})();

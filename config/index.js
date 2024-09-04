@@ -9,6 +9,7 @@ const {
   DB_PASSWORD,
   PASSKEY,
   REDIS_TTL,
+  REDIS_DATA_ENTRY_TIME,
 } = process.env;
 export {
   PORT,
@@ -19,4 +20,5 @@ export {
   DB_PASSWORD,
   PASSKEY,
   REDIS_TTL,
+  REDIS_DATA_ENTRY_TIME,
 };

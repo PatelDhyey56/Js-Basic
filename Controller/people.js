@@ -12,6 +12,7 @@ import {
   getObjectArrayCache,
   getObjectCache,
   setObjectCache,
+  addObjectCache,
   removeCache,
 } from "../helpers/DbHelpers/redis.js";
 import Messages from "../helpers/textHelpers/messages.js";
@@ -21,12 +22,12 @@ import jwt from "jsonwebtoken";
 let result;
 async function getPeople(req, res, next) {
   try {
-    const cacheData = await getObjectArrayCache(redisHelper.PeopleList);
+    const cacheData = await getObjectArrayCache(redisHelper.People_See_List);
     result = !!cacheData.length ? cacheData : await selectTable("People");
     !cacheData.length &&
       (await setObjectArrayCache(
-        redisHelper.PeopleList,
-        redisHelper.PeopleHash,
+        redisHelper.People_See_List,
+        redisHelper.People_See_Hash,
         result
       ));
     genralResponse(res, 200, { message: Messages.ALL_DATA, data: result });
@@ -41,7 +42,9 @@ const getPeopleById = async (req, res, next) => {
   try {
     let verify = jwt.verify(token, PASSKEY);
     if (!verify) throw new Error(Messages.PEOPLE_VALIDATE);
-    const cacheData = await getObjectCache(`${redisHelper.PeopleHash}${id}`);
+    const cacheData = await getObjectCache(
+      `${redisHelper.People_See_Hash}${id}`
+    );
     result = cacheData ? cacheData : await selectById("People", id);
     genralResponse(res, 200, {
       message: Messages.PEOPLE_GET,
@@ -53,11 +56,16 @@ const getPeopleById = async (req, res, next) => {
 };
 
 const postPeople = async (req, res, next) => {
-  const Body = Object.entries(req.body);
-  const bodyValues = Object.values(req.body);
+  const bodyData = req.body;
   try {
-    await addData("People", Body, bodyValues);
     var token = jwt.sign(req.body, PASSKEY);
+    addObjectCache(
+      `${redisHelper.DB_People_Add_Hash}${Math.floor(
+        Math.random() * 10000000000
+      )}`,
+      redisHelper.DB_People_Sets,
+      bodyData
+    );
     res.cookie("token", token);
     genralResponse(res, 200, {
       message: Messages.PEOPLE_CREATED,
@@ -70,12 +78,14 @@ const postPeople = async (req, res, next) => {
 
 const putPeople = async (req, res, next) => {
   const { id } = req.params;
-  const Body = Object.entries(req.body);
-  const bodyValues = Object.values(req.body);
+  const bodyData = req.body;
   try {
     await selectById("People", id);
-    let data = await updateData("People", id, Body, bodyValues);
-    await setObjectCache(`${redisHelper.PeopleHash}${id}`, req.body);
+    addObjectCache(
+      `${redisHelper.DB_People_Update_Hash}${id}`,
+      redisHelper.DB_People_Sets,
+      bodyData
+    );
     genralResponse(res, 200, {
       message: Messages.PEOPLE_UPDATED,
       data,
@@ -91,9 +101,9 @@ const deletePeople = async (req, res, next) => {
     await selectById("People", id);
     deleteData("People", id);
     await removeCache(
-      `${redisHelper.PeopleHash}${id}`,
+      `${redisHelper.People_See_Hash}${id}`,
       true,
-      redisHelper.PeopleList
+      redisHelper.People_See_List
     );
     genralResponse(res, 200, {
       message: Messages.PEOPLE_DELETE,

@@ -1,5 +1,7 @@
 import { createClient } from "redis";
-import { REDIS_TTL } from "../../config/index.js";
+import { REDIS_DATA_ENTRY_TIME, REDIS_TTL } from "../../config/index.js";
+import redisHelper from "../textHelpers/redisHelper.js";
+import { addData, updateData } from "./DbQueryHelper.js";
 
 const redis = createClient();
 
@@ -58,6 +60,25 @@ async function setObjectCache(key, data, ttl = REDIS_TTL) {
   }
 }
 
+async function addObjectCache(
+  key,
+  setName,
+  data,
+  ttl = +REDIS_DATA_ENTRY_TIME / 1000 + 600
+) {
+  try {
+    await redis
+      .multi()
+      .hSet(key, data)
+      .lPush(setName, key)
+      .expire(key, ttl)
+      .expire(setName, ttl)
+      .exec();
+  } catch (err) {
+    return null;
+  }
+}
+
 async function removeCache(key, object = false, listName = "") {
   try {
     object
@@ -68,10 +89,38 @@ async function removeCache(key, object = false, listName = "") {
   }
 }
 
+setInterval(async function addObjectToDb(key = redisHelper.DB_People_Sets) {
+  try {
+    let setLen = await redis.lLen(key);
+    while (setLen > 0) {
+      const popData = await redis.lIndex(key, setLen - 1);
+      const data = await redis.hGetAll(popData);
+      console.log(data);
+      if (!!data) {
+        popData.includes(redisHelper.DB_People_Update_Hash)
+          ? await updateData(
+              "People",
+              +popData.split(":")[1],
+              Object.entries(data),
+              Object.values(data)
+            )
+          : await addData("People", Object.entries(data), Object.values(data));
+        await redis.multi().rPop(key).del(popData).exec();
+      }
+      setLen--;
+      console.log(`Data Maintained By Redis!!!`);
+    }
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}, 1000 * 10);
+
 export {
   setObjectArrayCache,
   getObjectArrayCache,
   getObjectCache,
   setObjectCache,
+  addObjectCache,
   removeCache,
 };
