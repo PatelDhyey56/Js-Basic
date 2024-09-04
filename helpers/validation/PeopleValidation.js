@@ -7,8 +7,10 @@ const postPeopleValidate = (req, res, next) => {
   for (let e in postPeopleValid) {
     bodyKeys.pop(e);
     if (
-      postPeopleValid[e]?.required &&
-      !bodyData[e]?.toString().match(postPeopleValid[e]?.pattern)
+      (postPeopleValid[e]?.required &&
+        !String(bodyData[e])?.match(postPeopleValid[e]?.pattern)) ||
+      (postPeopleValid[e]?.required &&
+        String(bodyData[e])?.trim().length > postPeopleValid[e]?.length)
     )
       throw new Error(`Please Enter Valid ${e}`);
   }
@@ -23,8 +25,10 @@ const putPeopleValidate = (req, res, next) => {
     if (!bodyKeys.length) return next();
     bodyKeys.pop(e);
     if (
-      putPeopleValid[e]?.required &&
-      !bodyData[e]?.toString().match(putPeopleValid[e]?.pattern)
+      (postPeopleValid[e]?.required &&
+        !String(bodyData[e])?.match(postPeopleValid[e]?.pattern)) ||
+      (postPeopleValid[e]?.required &&
+        String(bodyData[e])?.trim().length > postPeopleValid[e]?.length)
     )
       throw new Error(`Please Enter Valid ${e}`);
   }

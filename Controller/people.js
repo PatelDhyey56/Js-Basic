@@ -2,8 +2,6 @@ import { PASSKEY } from "../config/index.js";
 import {
   selectTable,
   selectById,
-  addData,
-  updateData,
   deleteData,
 } from "../helpers/DbHelpers/DbQueryHelper.js";
 import { genralResponse } from "../helpers/generalFunctions.js";
@@ -11,7 +9,6 @@ import {
   setObjectArrayCache,
   getObjectArrayCache,
   getObjectCache,
-  setObjectCache,
   addObjectCache,
   removeCache,
 } from "../helpers/DbHelpers/redis.js";
@@ -88,9 +85,9 @@ const putPeople = async (req, res, next) => {
     );
     genralResponse(res, 200, {
       message: Messages.PEOPLE_UPDATED,
-      data,
     });
   } catch (e) {
+    console.log(e);
     next(e);
   }
 };

@@ -95,16 +95,17 @@ setInterval(async function addObjectToDb(key = redisHelper.DB_People_Sets) {
     while (setLen > 0) {
       const popData = await redis.lIndex(key, setLen - 1);
       const data = await redis.hGetAll(popData);
-      console.log(data);
       if (!!data) {
+        const objEntries = Object.entries(data);
+        const objValues = Object.values(data);
         popData.includes(redisHelper.DB_People_Update_Hash)
           ? await updateData(
               "People",
               +popData.split(":")[1],
-              Object.entries(data),
-              Object.values(data)
+              objEntries,
+              objValues
             )
-          : await addData("People", Object.entries(data), Object.values(data));
+          : await addData("People", objEntries, objValues);
         await redis.multi().rPop(key).del(popData).exec();
       }
       setLen--;
@@ -114,7 +115,7 @@ setInterval(async function addObjectToDb(key = redisHelper.DB_People_Sets) {
     console.log(err);
     return null;
   }
-}, 1000 * 10);
+}, REDIS_DATA_ENTRY_TIME);
 
 export {
   setObjectArrayCache,

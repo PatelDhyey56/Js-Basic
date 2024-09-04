@@ -7,6 +7,7 @@ export const postPeopleValid = {
   name: {
     required: true,
     pattern: patterns.textOnly,
+    length: 10,
   },
   age: {
     required: true,
@@ -15,6 +16,7 @@ export const postPeopleValid = {
   gender: {
     required: true,
     pattern: patterns.textOnly,
+    length: 8,
   },
 };
 
@@ -22,6 +24,7 @@ export const putPeopleValid = {
   name: {
     required: false,
     pattern: patterns.textOnly,
+    length: 10,
   },
   age: {
     required: false,
@@ -30,5 +33,6 @@ export const putPeopleValid = {
   gender: {
     required: false,
     pattern: patterns.textOnly,
+    length: 8,
   },
 };
