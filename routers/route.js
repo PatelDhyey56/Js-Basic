@@ -13,10 +13,11 @@ import {
 
 const router = Router();
 
-router.get("/", getPeople);
-router.get("/:id", getPeopleById);
-router.post("/", postPeopleValidate, postPeople);
-router.put("/:id", putPeopleValidate, putPeople);
-router.delete("/:id", deletePeople);
+router.route("/").get(getPeople).post(postPeopleValidate, postPeople);
+router
+  .route("/:id")
+  .get(getPeopleById)
+  .put(putPeopleValidate, putPeople)
+  .delete(deletePeople);
 
 export default router;

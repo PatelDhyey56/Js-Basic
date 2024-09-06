@@ -16,15 +16,15 @@ import Messages from "../helpers/textHelpers/messages.js";
 import redisHelper from "../helpers/textHelpers/redisHelper.js";
 import jwt from "jsonwebtoken";
 
-let result;
+let result, cacheData;
 async function getPeople(req, res, next) {
   try {
-    const cacheData = await getObjectArrayCache(redisHelper.People_See_List);
-    result = !!cacheData.length ? cacheData : await selectTable("People");
-    !cacheData.length &&
+    cacheData = await getObjectArrayCache(redisHelper.See_People_List);
+    result = !!cacheData?.length ? cacheData : await selectTable("People");
+    !cacheData?.length &&
       (await setObjectArrayCache(
-        redisHelper.People_See_List,
-        redisHelper.People_See_Hash,
+        redisHelper.See_People_List,
+        redisHelper.See_People_Hash,
         result
       ));
     genralResponse(res, 200, { message: Messages.ALL_DATA, data: result });
@@ -39,10 +39,14 @@ const getPeopleById = async (req, res, next) => {
   try {
     let verify = jwt.verify(token, PASSKEY);
     if (!verify) throw new Error(Messages.PEOPLE_VALIDATE);
-    const cacheData = await getObjectCache(
-      `${redisHelper.People_See_Hash}${id}`
-    );
+    cacheData = await getObjectCache(`${redisHelper.See_People_Hash}${id}`);
     result = cacheData ? cacheData : await selectById("People", id);
+    !cacheData &&
+      setObjectArrayCache(
+        redisHelper.See_People_List,
+        redisHelper.See_People_Hash,
+        result
+      );
     genralResponse(res, 200, {
       message: Messages.PEOPLE_GET,
       data: result,
@@ -57,7 +61,7 @@ const postPeople = async (req, res, next) => {
   try {
     var token = jwt.sign(req.body, PASSKEY);
     addObjectCache(
-      `${redisHelper.DB_People_Add_Hash}${Math.floor(
+      `${redisHelper.DB_Add_People_Hash}${Math.floor(
         Math.random() * 10000000000
       )}`,
       redisHelper.DB_People_Sets,
@@ -79,7 +83,7 @@ const putPeople = async (req, res, next) => {
   try {
     await selectById("People", id);
     addObjectCache(
-      `${redisHelper.DB_People_Update_Hash}${id}`,
+      `${redisHelper.DB_Update_People_Hash}${id}`,
       redisHelper.DB_People_Sets,
       bodyData
     );
@@ -98,9 +102,9 @@ const deletePeople = async (req, res, next) => {
     await selectById("People", id);
     deleteData("People", id);
     await removeCache(
-      `${redisHelper.People_See_Hash}${id}`,
+      `${redisHelper.See_People_Hash}${id}`,
       true,
-      redisHelper.People_See_List
+      redisHelper.See_People_List
     );
     genralResponse(res, 200, {
       message: Messages.PEOPLE_DELETE,

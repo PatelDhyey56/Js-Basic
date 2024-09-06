@@ -89,7 +89,7 @@ async function removeCache(key, object = false, listName = "") {
   }
 }
 
-setInterval(async function addObjectToDb(key = redisHelper.DB_People_Sets) {
+setInterval(async (key = redisHelper.DB_People_Sets) => {
   try {
     let setLen = await redis.lLen(key);
     while (setLen > 0) {
@@ -98,7 +98,7 @@ setInterval(async function addObjectToDb(key = redisHelper.DB_People_Sets) {
       if (!!data) {
         const objEntries = Object.entries(data);
         const objValues = Object.values(data);
-        popData.includes(redisHelper.DB_People_Update_Hash)
+        popData.includes(redisHelper.DB_Update_People_Hash)
           ? await updateData(
               "People",
               +popData.split(":")[1],
@@ -113,7 +113,6 @@ setInterval(async function addObjectToDb(key = redisHelper.DB_People_Sets) {
     }
   } catch (err) {
     console.log(err);
-    return null;
   }
 }, REDIS_DATA_ENTRY_TIME);
 

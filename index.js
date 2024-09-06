@@ -14,4 +14,6 @@ app.use(cookieParser());
 app.use(router);
 app.use(errorHandler);
 
-app.listen(PORT, () => console.log(`server Listen at ${PORT}`));
+app.listen(PORT, () =>
+  console.log(`Server Listen at http://localhost:${PORT}`)
+);
