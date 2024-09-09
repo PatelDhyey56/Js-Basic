@@ -2,6 +2,7 @@
 --* 1) setof 
 --* 2) Table with dafination 
 --*     Ex :- Table (id numeric, name varchar , age numeric , gende rvarchar)
+--* 3) Return Trigger
 
 --* create function in SQl
 create or replace function male_people(gender varchar)
