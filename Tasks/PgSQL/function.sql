@@ -6,9 +6,9 @@
 
 --* create function in SQl
 create or replace function male_people(gender varchar)
-returns setof public."People" as
+returns setof "People" as
 $body$
- select * from public."People" where gender=gender
+ select * from "People" where gender=gender
 $body$
 language sql
 
@@ -19,10 +19,10 @@ select (male_people('male'))
 --* create function in PS/PGSQL 
 
 create or replace function people_gender(gender_type varchar)
-returns setof public."People" as
+returns setof "People" as
 $body$
 begin
- return query select * from public."People" where gender=gender_type;
+ return query select * from "People" where gender=gender_type;
 end
 $body$
 language plpgsql
@@ -35,13 +35,13 @@ select (people_gender('male')).*
 -- /---------------------------------------------------------------------------
 --* With declare variable use in function defination
 create or replace function people_gender(gender_type varchar)
-returns setof public."People" as
+returns setof "People" as
 $body$
 for declareing some
 declare 
  data record
 begin
- return query select * from public."People" where gender=gender_type;
+ return query select * from "People" where gender=gender_type;
 end
 $body$
 language plpgsql
@@ -57,7 +57,7 @@ begin
  select extrect(month from bith_date) as month ,
  extrect(day from bith_date) as day ,
  age,name into name, age , day , month
- from public."People" where extrect(year from bith_date)=bd_year
+ from "People" where extrect(year from bith_date)=bd_year
  limit 1;
 end
 $body$

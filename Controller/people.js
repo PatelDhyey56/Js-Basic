@@ -3,6 +3,7 @@ import {
   selectTable,
   selectById,
   deleteData,
+  selectTableFirstAndLastId,
 } from "../helpers/DbHelpers/DbQueryHelper.js";
 import { genralResponse } from "../helpers/generalFunctions.js";
 import {
@@ -17,6 +18,7 @@ import redisHelper from "../helpers/textHelpers/redisHelper.js";
 import jwt from "jsonwebtoken";
 
 let result, cacheData;
+
 async function getPeople(req, res, next) {
   try {
     cacheData = await getObjectArrayCache(redisHelper.See_People_List);
@@ -28,6 +30,38 @@ async function getPeople(req, res, next) {
         result
       ));
     genralResponse(res, 200, { message: Messages.ALL_DATA, data: result });
+  } catch (e) {
+    next(e);
+  }
+}
+
+let pageFirst = 0,
+  pageLast = 0;
+const { first, last } = await selectTableFirstAndLastId("People");
+async function getPeopleWithPegination(req, res, next) {
+  try {
+    let {
+      mode = true,
+      limit = 10,
+      Id = pageFirst,
+      orderBy = "asc",
+    } = req.query;
+    console.log(Boolean(mode.toBool()));
+    result = await selectTable(
+      "People",
+      limit,
+      mode == "true" ? pageLast : Id,
+      mode == "true" ? true : false,
+      orderBy
+    );
+    pageFirst = result[orderBy === "asc" ? 0 : result.length - 1]?.id || 0;
+    pageLast = result[orderBy === "asc" ? result.length - 1 : 0]?.id || 0;
+    genralResponse(res, 200, {
+      message: Messages.ALL_DATA,
+      previous: pageFirst > first ? true : false,
+      next: pageLast < last ? true : false,
+      data: result,
+    });
   } catch (e) {
     next(e);
   }
@@ -114,4 +148,11 @@ const deletePeople = async (req, res, next) => {
   }
 };
 
-export { getPeople, getPeopleById, postPeople, putPeople, deletePeople };
+export {
+  getPeople,
+  getPeopleWithPegination,
+  getPeopleById,
+  postPeople,
+  putPeople,
+  deletePeople,
+};

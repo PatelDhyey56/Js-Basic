@@ -1,6 +1,6 @@
 -- Group By using having Condition 
 SELECT  gender,count(*) total 
-FROM public."People"
+FROM "People"
 where id>30
 group by gender 
 having count(*)>50

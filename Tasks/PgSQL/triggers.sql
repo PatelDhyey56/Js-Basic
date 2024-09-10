@@ -15,6 +15,6 @@ $body$
 --* Put trigger in public table 
 CREATE TRIGGER people_before_insert
 BEFORE INSERT
-ON public."People"
+ON "People"
 FOR EACH ROW
 EXECUTE FUNCTION people_ageVlidator();

@@ -1,8 +1,27 @@
 import { queryRun } from "../../config/db.js";
 import Messages from "../textHelpers/messages.js";
 
-const selectTable = async (tableName) => {
-  return await queryRun(`SELECT * FROM "${tableName}"`);
+const selectTable = async (
+  tableName,
+  limit,
+  lastId = 0,
+  next = true,
+  order = "asc"
+) => {
+  return await queryRun(
+    `SELECT * FROM  ( SELECT * FROM "${tableName}" 
+    where id ${next ? ">" : "<"} ${lastId} order by id 
+    ${next ? "asc" : "desc"} ${limit ? `limit ${limit}` : ""} )
+    Newt order by id ${order} `
+  );
+};
+
+const selectTableFirstAndLastId = async (tableName) => {
+  let first = await queryRun(`SELECT id FROM "${tableName}" limit 1`);
+  let last = await queryRun(
+    `SELECT id FROM "${tableName}" order by id desc limit 1`
+  );
+  return { first: first[0].id, last: last[0].id };
 };
 
 const selectById = async (tableName, id) => {
@@ -48,4 +67,11 @@ const deleteData = async (tableName, id) => {
   return await queryRun(`DELETE FROM "${tableName}" WHERE id = ${id};`);
 };
 
-export { selectTable, selectById, updateData, deleteData, addData };
+export {
+  selectTable,
+  selectById,
+  updateData,
+  deleteData,
+  addData,
+  selectTableFirstAndLastId,
+};

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   getPeople,
+  getPeopleWithPegination,
   postPeople,
   getPeopleById,
   putPeople,
@@ -14,6 +15,7 @@ import {
 const router = Router();
 
 router.route("/").get(getPeople).post(postPeopleValidate, postPeople);
+router.route("/pagination").get(getPeopleWithPegination);
 router
   .route("/:id")
   .get(getPeopleById)

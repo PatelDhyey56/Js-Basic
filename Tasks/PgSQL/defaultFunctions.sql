@@ -1,4 +1,4 @@
---*  random() | pi()
+--*  random() | pi() | now() | gen_random_uuid()
 
 --* power(val,powerof)-->return ans | sqrt(val) | cbrt(val)-->cube root 
 --* factorial(val) | abs(val)-->Positive value 
@@ -13,5 +13,5 @@ select sqrt(power(round(random()*10),2))
 --* sin(val) | asign(val)-->Inverse use sind(val)-->with digree 
 
 --* Extract(value from val) --> day | month | year |  
-SELECT * FROM public.orders
+SELECT * FROM orders
 where extract(month from order_date)=1 and extract(day from order_date)=2 
