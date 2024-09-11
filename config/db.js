@@ -22,7 +22,6 @@ db.connect(function (err) {
 });
 
 const queryRun = (sql, values = []) => {
-  console.log(sql);
   return new Promise((resolve, reject) => {
     db.query(sql, values, (err, result) => {
       if (err) return reject(err);

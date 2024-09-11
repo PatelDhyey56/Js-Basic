@@ -3,7 +3,7 @@ import Messages from "../textHelpers/messages.js";
 
 const selectTable = async (
   tableName,
-  limit,
+  limit = 0,
   lastId = 0,
   next = true,
   order = "asc"
@@ -11,8 +11,8 @@ const selectTable = async (
   return await queryRun(
     `SELECT * FROM  ( SELECT * FROM "${tableName}" 
     where id ${next ? ">" : "<"} ${lastId} order by id 
-    ${next ? "asc" : "desc"} ${limit ? `limit ${limit}` : ""} )
-    Newt order by id ${order} `
+    ${next ? "asc" : "desc"} ${!!limit ? `limit ${limit}` : ""} )
+    Newtable order by id ${order} `
   );
 };
 
